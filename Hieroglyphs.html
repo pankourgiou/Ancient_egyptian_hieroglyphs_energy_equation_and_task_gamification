@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>E = 𓆣 × mc² · Scribe's Challenge</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Egyptian+Hieroglyphs&family=Cinzel:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--wall:#0e2a3b;--wall2:#15394f;--gold:#e0a93c;--turq:#43bfb3;--bone:#efe6d0;--dim:#8fa7b3;--bad:#e5806a;
+--glyph:"Noto Sans Egyptian Hieroglyphs","Segoe UI Historic","Noto Sans Symbols 2","Apple Symbols","Egyptian Text",serif;
+--body:Georgia,"Times New Roman",serif}
+*{box-sizing:border-box}html,body{margin:0}
+body{min-height:100vh;background:radial-gradient(ellipse at top,var(--wall2),var(--wall) 70%);color:var(--bone);font-family:var(--body);padding:28px 18px 60px}
+main{max-width:860px;margin:0 auto}
+h1,h2,.cin{font-family:"Cinzel",Georgia,serif}
+h1{font-size:clamp(1.2rem,3vw,1.7rem);color:var(--gold);margin:0;letter-spacing:.03em}
+h2{font-size:1rem;color:var(--gold);margin:0 0 10px;font-weight:500;letter-spacing:.04em}
+.top{display:flex;flex-wrap:wrap;gap:14px 24px;align-items:center;justify-content:space-between;margin-bottom:22px}
+.stats{display:flex;gap:18px;align-items:center;flex-wrap:wrap;font-size:.95rem}
+.rank{color:var(--turq)}
+.bar{width:150px;height:8px;background:rgba(239,230,208,.15);border-radius:4px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--gold);width:0;transition:width .4s}
+.cartouche{border:3px solid var(--gold);border-radius:999px;padding:26px 52px;margin-bottom:22px;position:relative;background:rgba(0,0,0,.2);text-align:center}
+.cartouche::after{content:"";position:absolute;right:28px;top:16%;bottom:16%;width:3px;background:var(--gold)}
+.eq{font-size:clamp(1.5rem,5.2vw,2.6rem);line-height:1.5}
+.eq .g{font-family:var(--glyph);color:var(--gold);font-size:1.25em;padding:0 .1em;display:inline-block}
+.eq .given{font-size:.62em;color:var(--dim);display:block}
+.eq sup{font-size:.6em}
+.picker{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;margin:-6px 0 22px;max-height:210px;overflow-y:auto;padding:10px;border:1px solid rgba(239,230,208,.15);border-radius:6px;background:rgba(0,0,0,.12)}
+.pk{font-family:var(--glyph);font-size:1.7rem;line-height:1;padding:8px 10px;color:var(--gold);min-width:50px}
+.pk[aria-pressed="true"]{background:var(--gold);border-color:var(--gold);color:#1a1405}
+.pk.rnd{font-family:var(--body);font-size:.95rem;color:var(--bone)}
+.plabel{flex-basis:100%;text-align:center;color:var(--dim);font-size:.9rem}
+.panel{border:1px solid rgba(239,230,208,.2);border-radius:6px;padding:18px 20px;margin-bottom:16px;background:rgba(0,0,0,.12)}
+.panel.done{border-color:var(--turq)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+input[type=number]{font:inherit;font-size:1.05rem;width:120px;padding:8px 10px;border-radius:3px;border:1px solid var(--dim);background:#0a1f2d;color:var(--bone)}
+button{font:inherit;font-size:.95rem;color:var(--bone);background:transparent;border:1px solid var(--dim);padding:8px 16px;border-radius:3px;cursor:pointer}
+button.pri{background:var(--gold);border-color:var(--gold);color:#1a1405;font-weight:700}
+button:hover:not(:disabled){border-color:var(--gold)}button:disabled{opacity:.5;cursor:default}
+button:focus-visible,input:focus-visible{outline:2px solid var(--turq);outline-offset:2px}
+.opt{display:block;width:100%;text-align:left;margin-top:8px}
+.opt.right{border-color:var(--turq);background:rgba(67,191,179,.2)}
+.opt.wrong{border-color:var(--bad);background:rgba(229,128,106,.15)}
+.msg{margin-top:10px;min-height:1.3em}.ok{color:var(--turq)}.no{color:var(--bad)}
+.fact{margin-top:12px;padding:12px 14px;border-left:3px solid var(--gold);background:rgba(224,169,60,.08);line-height:1.5}
+.coll{display:grid;grid-template-columns:repeat(auto-fill,minmax(74px,1fr));gap:10px}
+.cell{aspect-ratio:1;border:1px solid rgba(239,230,208,.2);border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:var(--glyph);font-size:2rem;color:var(--gold);cursor:default}
+.cell.lock{color:rgba(239,230,208,.25);font-family:var(--body)}
+.badges{display:flex;flex-wrap:wrap;gap:8px}
+.badge{padding:6px 12px;border-radius:999px;border:1px solid rgba(239,230,208,.25);font-size:.85rem;color:var(--dim)}
+.badge.on{border-color:var(--gold);color:var(--gold)}
+.small{font-size:.82rem;color:var(--dim);line-height:1.5;margin-top:18px}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--gold);color:#1a1405;padding:10px 18px;border-radius:4px;font-weight:700;opacity:0;pointer-events:none;transition:opacity .3s}
+#toast.show{opacity:1}
+@media(max-width:560px){.cartouche{padding:22px 34px;border-radius:44px}}
+</style>
+</head>
+<body>
+<main>
+<div class="top">
+  <h1>Scribe's Challenge</h1>
+  <div class="stats">
+    <span class="rank cin" id="rank"></span>
+    <span><b id="xp">0</b> XP</span>
+    <div class="bar" aria-hidden="true"><i id="bar"></i></div>
+    <span>Streak <b id="streak">0</b></span>
+  </div>
+</div>
+
+<div class="cartouche"><div class="eq" id="eq" aria-live="polite"></div></div>
+
+<div class="picker" id="picker" role="group" aria-label="Choose the hieroglyph that replaces 1"></div>
+
+<section class="panel" id="p1">
+  <h2>Task 1 · Energy</h2>
+  <div id="q1"></div>
+  <div class="row">
+    <input type="number" id="ans" inputmode="numeric" aria-label="Your answer for E">
+    <button class="pri" id="chk">Check</button>
+    <button id="hint">Hint (−half XP)</button>
+  </div>
+  <div class="msg" id="m1"></div>
+</section>
+
+<section class="panel" id="p2">
+  <h2>Task 2 · Hieroglyph trivia</h2>
+  <div id="q2"></div>
+  <div id="opts"></div>
+  <div class="msg" id="m2"></div>
+</section>
+
+<div class="panel" id="reveal" hidden>
+  <div class="fact" id="fact"></div>
+  <div class="row"><button class="pri" id="next">Next round</button></div>
+</div>
+
+<section class="panel"><h2>Glyph collection <span id="cc" style="color:var(--dim);font-size:.85em"></span></h2><div class="coll" id="coll"></div></section>
+<section class="panel"><h2>Badges</h2><div class="badges" id="badges"></div></section>
+
+<p class="small">Each round starts with a random hieroglyph (new ones are favored until you have collected them all) in place of the number 1, and you can swap it for any other with the glyph buttons (this restarts the round with new numbers), so <b>E = (glyph) × mc²</b> means E = m × c². Finish both tasks to collect the glyph. If you see empty boxes instead of hieroglyphs, your device needs an Egyptian Hieroglyphs font (it loads online automatically).</p>
+</main>
+<div id="toast" role="status"></div>
+
+<script>
+const GL=[
+ {g:"𓆣",n:"Scarab beetle",q:"What did the scarab beetle symbolize?",o:["Rebirth and the rising sun","War and conquest","The annual harvest"],f:"Egyptians watched scarabs roll balls of dung and compared it to the sun being pushed across the sky each day, so the beetle became a sign of rebirth."},
+ {g:"𓂀",n:"Eye of Horus (wedjat)",q:"The wedjat eye was mostly worn as a…",o:["Protective amulet","Royal currency","Calendar mark"],f:"Its parts also stood for fractions (1/2, 1/4, 1/8, 1/16, 1/32, 1/64) used to measure grain, so this one hieroglyph doubles as a math tool."},
+ {g:"𓋹",n:"Ankh",q:"What does the ankh sign mean?",o:["Life","Water","Stone"],f:"Gods are often shown holding an ankh to a king's nose, symbolically giving him the breath of life."},
+ {g:"𓅓",n:"Owl",q:"Which sound does the owl hieroglyph write?",o:["m","s","k"],f:"Hieroglyphs have about 24 single-consonant signs, a bit like an alphabet. The owl is the one for m, the same m as in mc²."},
+ {g:"𓈖",n:"Water ripple",q:"The ripple sign 𓈖 stands for which sound?",o:["n","h","t"],f:"The ripple is the sign for n. Three ripples written together spell the word for water, mw."},
+ {g:"𓇳",n:"Sun disk",q:"The sun disk with a dot was read as…",o:["Ra, the sun","Moon","Star"],f:"The same sign wrote 'sun', 'day' and the sun god's name, Ra. It also hints at energy, which is what E in the equation is about."},
+ {g:"𓊽",n:"Djed pillar",q:"The djed pillar symbolized…",o:["Stability","Speed","Wealth"],f:"The djed was linked to the god Osiris and is often described as his backbone. Raising the djed was a festival ritual."},
+ {g:"𓃭",n:"Lion",q:"In Greek-era names such as Ptolemy, the lion sign wrote…",o:["l","p","b"],f:"The Egyptian language had no clear 'l' in older times. Scribes reused the lion sign (rw) to write l in foreign names."},
+ {g:"𓅃",n:"Falcon",q:"Which god is shown as a falcon?",o:["Horus","Anubis","Thoth"],f:"The falcon was Horus, god of sky and kingship. Each reigning king was considered the living Horus."},
+ {g:"𓉐",n:"House",q:"The word 'pharaoh' comes from the house sign. It originally meant…",o:["Great house (the palace)","Sacred river","Golden crown"],f:"Per-aa, 'great house', first named the royal palace. Only much later did the word come to mean the king himself."},
+ {"g": "𓄿", "n": "Egyptian vulture", "q": "Which sound does this vulture sign write?", "o": ["A throat sound, the Egyptian aleph", "b", "sh"], "f": "Egyptian had a throat sound with no English letter, and this vulture wrote it. A different vulture sign wrote the word for 'mother', mut."},
+ {"g": "𓅱", "n": "Quail chick", "q": "The quail chick is the sign for which sound?", "o": ["w", "t", "d"], "f": "The chick writes w and is one of the most frequent signs in the language."},
+ {"g": "𓂋", "n": "Mouth", "q": "Why does the mouth sign write the sound r?", "o": ["The word for mouth was ra", "It looks like a cave", "It stands for roar"], "f": "The mouth sign is a single-consonant sign r. Many such signs are thought to come from the first sound of the object's name."},
+ {"g": "𓃀", "n": "Foot", "q": "The foot sign writes which sound?", "o": ["b", "f", "k"], "f": "Hieroglyphs have about 24 single-consonant signs, and the foot is the one for b."},
+ {"g": "𓁹", "n": "Eye", "q": "Besides seeing, the eye sign ir was used to write the verb…", "o": ["To do or to make", "To sleep", "To pray"], "f": "Egyptian writes the sounds of words, so a picture of an eye can write 'make' because both are pronounced ir."},
+ {"g": "𓂓", "n": "Ka arms", "q": "What does the raised-arms ka sign stand for?", "o": ["A person's life force", "A prayer", "A harvest"], "f": "The ka was believed to need food and drink after death, which is why tombs held offerings."},
+ {"g": "𓅜", "n": "Ba bird", "q": "The human-headed bird sign ba means…", "o": ["The soul or personality", "The sun at noon", "A messenger"], "f": "The ba could leave the tomb by day and return at night to the body."},
+ {"g": "𓆊", "n": "Crocodile", "q": "Which god could appear as a crocodile?", "o": ["Sobek", "Bes", "Seth"], "f": "Sobek was linked to the Nile, fertility and royal power. The Greeks named a city in the Faiyum Crocodilopolis after him."},
+ {"g": "𓆑", "n": "Horned viper", "q": "The horned viper writes the sound f. Written as a word ending it means…", "o": ["He, him or his", "Fire", "Far"], "f": "This little snake is the Egyptian suffix for 'he'. Hieroglyph spelling is more flexible than English."},
+ {"g": "𓆗", "n": "Rearing cobra (uraeus)", "q": "Where did a pharaoh wear the uraeus cobra?", "o": ["On the forehead of the crown", "Around the waist", "On the sandals"], "f": "The uraeus was meant to spit fire at the king's enemies and was linked to the goddess Wadjet."},
+ {"g": "𓆤", "n": "Bee", "q": "A bee sign marked the king of which land?", "o": ["Lower Egypt (the north)", "Upper Egypt", "Nubia"], "f": "The king's title nsw-bity is often translated 'he of the sedge and the bee'."},
+ {"g": "𓇓", "n": "Sedge", "q": "The sedge plant was the emblem of which region?", "o": ["Upper Egypt (the south)", "Lower Egypt", "The Sinai"], "f": "Upper Egypt is in the south because the Nile flows north, so 'up' means upstream."},
+ {"g": "𓇋", "n": "Reed leaf", "q": "Which sound does the reed leaf write?", "o": ["i (a vowel-like sound)", "m", "r"], "f": "Two reed leaves together write y, which is often found at the end of words."},
+ {"g": "𓇯", "n": "Sky", "q": "The sky sign pt is linked to which goddess?", "o": ["Nut", "Isis", "Hathor"], "f": "Nut was shown arching over the earth, her body covered in stars."},
+ {"g": "𓇼", "n": "Star", "q": "A star sign is used to write which word?", "o": ["Star (and also worship)", "Water", "Mountain"], "f": "Egyptians drew stars with five points, the shape we still use."},
+ {"g": "𓇿", "n": "Land", "q": "Kemet, a name for Egypt, means…", "o": ["Black land", "Golden land", "River land"], "f": "Kemet named the dark fertile soil left by the Nile flood, in contrast with the red desert, Deshret."},
+ {"g": "𓈉", "n": "Desert hills", "q": "The sign for sloping hills marks…", "o": ["Desert or foreign land", "A pyramid", "The sky"], "f": "The phrase heqau khasut, 'rulers of foreign lands', gave us the name Hyksos."},
+ {"g": "𓉴", "n": "Pyramid", "q": "Who built the Great Pyramid of Giza?", "o": ["Khufu", "Ramesses II", "Tutankhamun"], "f": "The Great Pyramid was the tallest human-made structure on Earth for about 3,800 years."},
+ {"g": "𓊖", "n": "City", "q": "The circle with a cross is a silent sign (determinative) for…", "o": ["Cities and towns", "Wheels", "Suns"], "f": "A determinative is a silent sign at the end of a word that tells you which category it belongs to."},
+ {"g": "𓊛", "n": "Boat", "q": "Why were boats so important in Egypt?", "o": ["The Nile was the main highway", "There were no roads", "Fishing was forbidden on land"], "f": "Khufu's ship, found sealed beside the Great Pyramid, is more than 40 meters long."},
+ {"g": "𓊨", "n": "Seat", "q": "The seat sign gives the name of which goddess?", "o": ["Isis", "Hathor", "Sekhmet"], "f": "Isis in Egyptian is Aset, 'throne'. She wears the throne on her head."},
+ {"g": "𓊹", "n": "Cloth on a pole", "q": "This pole-and-cloth sign writes the word for…", "o": ["God", "King", "Horse"], "f": "It may show a flag or banner outside a temple. The same word was used for gods of all kinds."},
+ {"g": "𓊵", "n": "Offering table", "q": "The bread-on-a-mat offering sign htp means…", "o": ["Offering, peace", "War", "Boat"], "f": "The name Imhotep, 'he who comes in peace', contains this word."},
+ {"g": "𓋞", "n": "Gold collar", "q": "Egyptians believed the flesh of the gods was made of…", "o": ["Gold", "Silver", "Lapis lazuli"], "f": "The word for gold is nebu, which explains why royal and divine objects were covered in it."},
+ {"g": "𓋑", "n": "White crown", "q": "The white crown (hedjet) belonged to which region?", "o": ["Upper Egypt", "Lower Egypt", "Nubia"], "f": "Upper Egypt is the narrow southern Nile valley."},
+ {"g": "𓋔", "n": "Red crown", "q": "The red crown (deshret) belonged to which region?", "o": ["Lower Egypt", "Upper Egypt", "Punt"], "f": "Lower Egypt is the northern Nile delta."},
+ {"g": "𓋖", "n": "Double crown", "q": "The double crown (pschent) shows…", "o": ["The union of Upper and Lower Egypt", "A military victory", "A royal wedding"], "f": "Combining the white and red crowns showed that the king ruled both lands."},
+ {"g": "𓋾", "n": "Crook", "q": "The crook, held with a flail, symbolized…", "o": ["Kingship, ruling like a shepherd", "A farmer", "A hunter"], "f": "The word heqa, 'ruler', comes from the shepherd's crook."},
+ {"g": "𓎟", "n": "Basket", "q": "The basket sign nb means…", "o": ["Lord, all or every", "Door", "Water"], "f": "It appears in titles like 'Lord of the Two Lands'."},
+ {"g": "𓎡", "n": "Basket with handle", "q": "The basket with a handle writes which sound?", "o": ["k (our hard c)", "s", "n"], "f": "The c in mc² is a hard c sound, which this sign would write."},
+ {"g": "𓎆", "n": "Cattle hobble (ten)", "q": "What is the cattle hobble sign worth?", "o": ["10", "1", "100"], "f": "The Egyptians counted in tens but had no zero and no place value, so they just repeated signs."},
+ {"g": "𓍢", "n": "Coiled rope (hundred)", "q": "What is the coiled rope sign worth?", "o": ["100", "10", "1000"], "f": "Numbers were added by repeating signs. Three coils and two hobbles meant 320."},
+ {"g": "𓆼", "n": "Lotus (thousand)", "q": "What is the lotus plant sign worth?", "o": ["1,000", "10", "10,000"], "f": "Nine lotus signs in a row wrote 9,000."},
+ {"g": "𓂭", "n": "Finger (ten thousand)", "q": "What is the pointing finger sign worth?", "o": ["10,000", "100", "1,000"], "f": "With no zero, large numbers simply repeated the signs."},
+ {"g": "𓆐", "n": "Tadpole (hundred thousand)", "q": "What is the tadpole sign worth?", "o": ["100,000", "10,000", "1,000,000"], "f": "Tadpoles swarm along the Nile banks after the flood, which may be why this sign means 'many'."},
+ {"g": "𓁨", "n": "Heh (million)", "q": "The kneeling figure with raised arms stood for…", "o": ["One million, or 'countless'", "One", "Zero"], "f": "The god Heh embodied eternity and endless time."},
+ {"g": "𓏏", "n": "Bread", "q": "The bread loaf sign writes which sound?", "o": ["t", "p", "m"], "f": "Many feminine words and names end with -t, written with this sign."},
+ {"g": "𓏠", "n": "Senet board", "q": "Senet was a…", "o": ["Board game", "Musical instrument", "Calendar"], "f": "Senet boards were found in Tutankhamun's tomb. The game symbolized a journey through the afterlife."},
+ {"g": "𓏞", "n": "Scribe's palette", "q": "A scribe's kit held…", "o": ["Reed pens and black and red ink", "A chisel and hammer", "Only clay tablets"], "f": "Red ink marked headings and key words, which is where the word 'rubric' comes from."},
+ {"g": "𓏛", "n": "Papyrus roll", "q": "Which English word comes from papyrus?", "o": ["Paper", "Pencil", "Pharmacy"], "f": "Papyrus was made from strips of a Nile plant, laid in layers and pressed."},
+ {"g": "𓀀", "n": "Seated man", "q": "A seated man at the end of a word usually marks…", "o": ["Male persons", "Boats", "Animals"], "f": "Silent category signs like this one make hieroglyphic text easier to read, since words have no spaces."},
+ {"g": "𓁐", "n": "Seated woman", "q": "A seated woman at the end of a word marks…", "o": ["Female persons", "Houses", "Plants"], "f": "Hatshepsut ruled Egypt as king for about two decades, around 1479 to 1458 BCE."},
+ {"g": "𓀔", "n": "Child", "q": "How are children typically shown in Egyptian art?", "o": ["With a side lock of hair and finger at the mouth", "As tiny adults with beards", "Holding a crook"], "f": "The side lock of youth was cut off when a child grew up."},
+ {"g": "𓆄", "n": "Feather of Maat", "q": "In the afterlife judgement, the heart was weighed against…", "o": ["The feather of Maat", "A golden scarab", "A grain of barley"], "f": "If the heart was heavier than the feather, the monster Ammit would eat it."},
+ {"g": "𓅝", "n": "Ibis", "q": "The ibis was sacred to Thoth, patron of…", "o": ["Writing and wisdom", "War", "Storms"], "f": "Thoth was thought to have invented writing. Egyptians called hieroglyphs medu netjer, 'words of the god'."},
+ {"g": "𓄣", "n": "Heart", "q": "Egyptians thought the seat of thought and emotion was the…", "o": ["Heart", "Brain", "Liver"], "f": "In mummification the brain was removed and discarded but the heart was left in the body."},
+ {"g": "𓄤", "n": "Heart and windpipe (nefer)", "q": "The nefer sign begins the name Nefertiti. It means…", "o": ["Good, beautiful, perfect", "Queen", "River"], "f": "Nefertiti means 'the beautiful one has come'."},
+ {"g": "𓌒", "n": "Bow", "q": "The Nine Bows stood for…", "o": ["Egypt's traditional foreign enemies", "The nine gods of Heliopolis", "Nine royal archers"], "f": "Kings were shown trampling the Nine Bows, often on their sandals or throne bases."},
+ {"g": "𓃒", "n": "Bull", "q": "Which sacred bull was worshipped at Memphis?", "o": ["Apis", "Ammit", "Bastet"], "f": "The Apis bull was linked to the god Ptah, and each one was mummified with great ceremony."}
+];
+const RANKS=["Apprentice","Scribe","Royal Scribe","Vizier","Pharaoh"],STEP=100;
+const BADGES=[
+ {id:"first",t:"First inscription",ok:s=>s.rounds>=1},
+ {id:"s3",t:"Streak of 3",ok:s=>s.best>=3},
+ {id:"c5",t:"Collect 5 glyphs",ok:s=>s.got.length>=5},
+ {id:"c25",t:"Collect 25 glyphs",ok:s=>s.got.length>=25},
+ {id:"xp200",t:"200 XP",ok:s=>s.xp>=200},
+ {id:"xp500",t:"500 XP",ok:s=>s.xp>=500},
+ {id:"all",t:"Complete collection",ok:s=>s.got.length>=GL.length}
+];
+let S={xp:0,streak:0,best:0,rounds:0,got:[],badges:[]};
+try{const raw=localStorage.getItem("scribe-v1");if(raw)S=Object.assign(S,JSON.parse(raw))}catch(e){}
+const save=()=>{try{localStorage.setItem("scribe-v1",JSON.stringify(S))}catch(e){}};
+const $=id=>document.getElementById(id);
+let R=null,last=-1;
+
+function toast(t){const e=$("toast");e.textContent=t;e.classList.add("show");setTimeout(()=>e.classList.remove("show"),2200)}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a}
+
+function newRound(force){
+  let i;
+  if(typeof force==="number")i=force;
+  else{
+    const fresh=GL.map((g,k)=>k).filter(k=>!S.got.includes(k)&&k!==last);
+    if(fresh.length&&Math.random()<0.7)i=fresh[Math.random()*fresh.length|0];
+    else do{i=Math.random()*GL.length|0}while(i===last&&GL.length>1);
+  }
+  last=i;
+  R={i,m:2+(Math.random()*8|0),c:2+(Math.random()*4|0),wrong:0,hint:false,math:false,quiz:false};
+  const g=GL[i];
+  $("eq").innerHTML=`<span class="given">given (<span class="g">${g.g}</span> = 1)</span>E = <span class="g">${g.g}</span> × mc<sup>2</sup>`;
+  $("q1").innerHTML=`Using the glyph as 1, find <b>E</b> when <b>m = ${R.m}</b> and <b>c = ${R.c}</b>.`;
+  $("ans").value="";$("ans").disabled=false;$("chk").disabled=false;$("hint").disabled=false;
+  $("m1").textContent="";$("m2").textContent="";$("p1").classList.remove("done");$("p2").classList.remove("done");
+  $("q2").textContent=g.q;
+  const opts=shuffle(g.o);
+  $("opts").innerHTML="";
+  opts.forEach(t=>{const b=document.createElement("button");b.className="opt";b.textContent=t;b.onclick=()=>pick(b,t);$("opts").appendChild(b)});
+  $("reveal").hidden=true;
+  renderPicker();
+}
+function renderPicker(){
+  const el=$("picker");el.innerHTML='<div class="plabel">Choose the hieroglyph that stands for 1</div>';
+  GL.forEach((g,i)=>{const b=document.createElement("button");b.className="pk";b.textContent=g.g;b.title=g.n;b.setAttribute("aria-label",g.n);b.setAttribute("aria-pressed",R&&R.i===i);b.onclick=()=>newRound(i);el.appendChild(b)});
+  const r=document.createElement("button");r.className="pk rnd";r.textContent="Random";r.onclick=()=>newRound();el.appendChild(r);
+}
+function gain(n,why){S.xp+=n;toast("+"+n+" XP · "+why)}
+function chk(){
+  if(!R||R.math)return;
+  const v=Number($("ans").value);if($("ans").value==="")return;
+  const E=R.m*R.c*R.c;
+  if(v===E){
+    R.math=true;const pts=Math.max(5,(R.hint?10:20)-5*R.wrong);
+    $("m1").innerHTML=`<span class="ok">Correct: E = 1 × ${R.m} × ${R.c}² = ${E}</span>`;
+    $("p1").classList.add("done");$("ans").disabled=true;$("chk").disabled=true;$("hint").disabled=true;
+    gain(pts,"energy solved");finish();
+  }else{R.wrong++;S.streak=0;$("m1").innerHTML=`<span class="no">Not yet. Try again.</span>`;ui();save()}
+}
+function hint(){R.hint=true;$("m1").innerHTML=`Hint: first square c (${R.c} × ${R.c} = ${R.c*R.c}), then multiply by m.`}
+function pick(b,t){
+  if(R.quiz)return;R.quiz=true;const g=GL[R.i];
+  [...$("opts").children].forEach(x=>{x.disabled=true;if(x.textContent===g.o[0])x.classList.add("right")});
+  if(t===g.o[0]){$("m2").innerHTML=`<span class="ok">Right!</span>`;R.quizOk=true;if(S.got.includes(R.i)){$("m2").innerHTML+=' <span style="color:var(--dim)">(XP is only given for glyphs you have not collected yet.)</span>'}else gain(20,"trivia")}
+  else{b.classList.add("wrong");$("m2").innerHTML=`<span class="no">Not this time.</span>`;R.quizOk=false}
+  $("p2").classList.add("done");finish();
+}
+function finish(){
+  ui();
+  if(!(R.math&&R.quiz))return;
+  S.rounds++;
+  if(R.quizOk){S.streak++;S.best=Math.max(S.best,S.streak);if(S.streak>1)gain(5*(S.streak-1),"streak bonus")}else S.streak=0;
+  const g=GL[R.i];
+  if(!S.got.includes(R.i)){S.got.push(R.i);toast("New glyph collected: "+g.n)}
+  $("fact").innerHTML=`<span style="font-family:var(--glyph);font-size:1.6em;color:var(--gold)">${g.g}</span> <b>${g.n}.</b> ${g.f}`;
+  $("reveal").hidden=false;
+  BADGES.forEach(b=>{if(!S.badges.includes(b.id)&&b.ok(S)){S.badges.push(b.id);setTimeout(()=>toast("Badge: "+b.t),1200)}});
+  ui();save();$("next").focus();
+}
+function ui(){
+  const lvl=Math.min(RANKS.length-1,Math.floor(S.xp/STEP));
+  $("rank").textContent=RANKS[lvl];$("xp").textContent=S.xp;$("streak").textContent=S.streak;
+  $("bar").style.width=(lvl===RANKS.length-1?100:S.xp%STEP)+"%";
+  $("cc").textContent=`(${S.got.length}/${GL.length})`;
+  $("coll").innerHTML=GL.map((g,i)=>S.got.includes(i)?`<div class="cell" title="${g.n}">${g.g}</div>`:`<div class="cell lock" title="Locked">?</div>`).join("");
+  $("badges").innerHTML=BADGES.map(b=>`<span class="badge ${S.badges.includes(b.id)?"on":""}">${b.t}</span>`).join("");
+}
+$("chk").onclick=chk;$("hint").onclick=hint;$("next").onclick=newRound;
+$("ans").addEventListener("keydown",e=>{if(e.key==="Enter")chk()});
+ui();newRound();
+</script>
+</body>
+</html>
